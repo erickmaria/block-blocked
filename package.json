@@ -1,0 +1,45 @@
+{
+  "name": "block-blocked",
+  "version": "0.0.1-alpha",
+  "description": "2d platform game made in PhaserJS 3",
+  "main": "server/server.js",
+  "scripts": {
+    "gulp-run-server": "gulp server",
+    "gulp-build-bundle": "gulp dundle",
+    "start": "node server/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ErickMaria/block-blocked.git"
+  },
+  "keywords": [
+    "Game",
+    "2d",
+    "Platform",
+    "Phaser",
+    "PhaserJS",
+    "JavaScript"
+  ],
+  "author": "Erick Maria",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ErickMaria/block-blocked/issues"
+  },
+  "homepage": "https://github.com/ErickMaria/block-blocked#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "esm": "^3.2.25",
+    "express": "^4.17.1",
+    "phaser": "^3.23.0"
+  },
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-clean": "^0.4.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-nodemon": "^2.5.0",
+    "gulp-plumber": "^1.2.1",
+    "gulp-rename": "^2.0.0",
+    "gulp-uglify": "^3.0.2"
+  }
+}
