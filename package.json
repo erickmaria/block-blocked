@@ -4,8 +4,10 @@
   "description": "2d platform game made in PhaserJS 3",
   "main": "server/server.js",
   "scripts": {
-    "gulp-run-server": "gulp server",
-    "gulp-build-bundle": "gulp dundle",
+    "server-dev": "gulp dev",
+    "server-prod": "gulp prod",
+    "build-dev": "gulp build-dev",
+    "build-prod": "gulp build-prod",
     "start": "node server/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -37,6 +39,7 @@
     "gulp": "^4.0.2",
     "gulp-clean": "^0.4.0",
     "gulp-concat": "^2.6.1",
+    "gulp-inject": "^5.0.5",
     "gulp-nodemon": "^2.5.0",
     "gulp-plumber": "^1.2.1",
     "gulp-rename": "^2.0.0",
