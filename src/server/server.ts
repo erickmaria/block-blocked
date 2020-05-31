@@ -1,5 +1,3 @@
-'use strict';
-
 import http from 'http';
 import app from './app';
 import dotenv from 'dotenv';

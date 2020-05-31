@@ -1,0 +1,16 @@
+{
+    "restartable": "rs",
+    "ignore": [
+        ".git",
+        "node_modules/"
+    ],
+    "verbose": true,
+    "exec": "node -r esm ./dist/server/server.js",
+    "events": {
+        "start": "echo 'OK'",
+        "crash": "echo 'CRASHED'",
+        "exit": "echo 'STOPPED'",
+        "quit": "echo 'QUIT'"
+    },
+    "ext": "js"
+}

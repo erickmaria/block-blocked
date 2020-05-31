@@ -1,132 +1,132 @@
 'use strict';
 
 const
-	gulp  	= require('gulp'),
+	gulp = require('gulp'),
 	plumber = require('gulp-plumber'),
-	concat  = require('gulp-concat'),
-	uglify  = require('gulp-uglify'),
-	rename  = require('gulp-rename'),
-	clean   = require('gulp-clean'),
-	nodemon	= require('gulp-nodemon'),
+	concat = require('gulp-concat'),
+	uglify = require('gulp-uglify-es').default,
+	rename = require('gulp-rename'),
+	clean = require('gulp-clean'),
+	// nodemon = require('gulp-nodemon'),
+	// path = require('path'),
 	inject = require('gulp-inject'),
-	exec   = require('child_process').exec,
-	spawn   = require('child_process').spawn;
+	ts = require('gulp-typescript'),
+	webpack = require('gulp-webpack'),
+	exec = require('child_process').exec;
 
 const
-	SRC_DIR        	   	= './src/game/*.js',
-	DIST_DIR 	   	   	= './src/public/game',
-	DIST_FILE_NAME 	   	= 'game.js',
-	INJECT_TARGET	   	= './src/web/*.html',
-	INJECT_SOURCE	   	= './src/public/game/*js',
-	INJECT_IGNORE_PATH 	= '/src/public',
-	INJECT_DIST		   	= './src/public',
-	SERVER_DIR 	   	   	= './src/server',
-	SERVER_FINAME_NAME 	= '/server.js',
-	SERVER_COMMAND_EXEC = `node -r esm ${SERVER_DIR}${SERVER_FINAME_NAME}`;
- 
+	SRC_DIR = './dist/game/*.js',
+	OUTPUT_BUNBLE_NAME = 'game.js',
+	DIST_DIR = './dist/public/game',
+	DIST_FILE_NAME = 'game.js',
+	INJECT_TARGET = './src/web/*.html',
+	INJECT_SOURCE = './dist/public/game/*js',
+	INJECT_IGNORE_PATH = '/dist/public',
+	INJECT_DIST = './dist/public',
+	CLEAN_DIST = './dist',
+	SERVER_DIR = './dist/server',
+	SERVER_FINAME_NAME = '/server.js',
+	SERVER_PROD_COMMAND_EXEC = `node -r esm ${SERVER_DIR}${SERVER_FINAME_NAME}`;
+
+let tsProject = ts.createProject("tsconfig.json");
+
+let webpackOptions = {
+	output: {
+		filename: OUTPUT_BUNBLE_NAME,
+	  },
+}
+
 // Clean
 gulp.task('clean', () => {
-	return gulp.src([INJECT_DIST], {read: false, allowEmpty: true})
-	  .pipe(clean({force: true}));
+	return gulp.src([CLEAN_DIST], { read: false, allowEmpty: true })
+		.pipe(clean({ force: true }));
+});
+
+// Transpile
+gulp.task("transpile", function () {
+	return tsProject
+		.src()
+		.pipe(tsProject())
+		.js.pipe(gulp.dest(tsProject.options.outDir));
 });
 
 // Minify e Concat Scripts
 gulp.task('build-prod', () => {
 	return gulp.src(SRC_DIR)
 		.pipe(plumber()
-			.on('error', (err) => { 
+			.on('error', (err) => {
 				console.log(err);
 			}))
-	    .pipe(uglify())
+		.pipe(webpack(webpackOptions))
+		.pipe(uglify())
 		.pipe(concat(DIST_FILE_NAME))
-		.pipe(rename({suffix: '.min'}))
+		.pipe(rename({ suffix: '.min' }))
 		.pipe(gulp.dest(DIST_DIR));
 });
 
-// Minify e Concat Scripts
 gulp.task('build-dev', () => {
 	return gulp.src(SRC_DIR)
 		.pipe(plumber()
-			.on('error', (err) => { 
+			.on('error', (err) => {
 				console.log(err);
 			}))
-		.pipe(concat(DIST_FILE_NAME))
+		.pipe(webpack(webpackOptions))
 		.pipe(gulp.dest(DIST_DIR));
 });
 
 // Inject
 gulp.task('inject', () => {
 	return gulp.src(INJECT_TARGET)
-		.pipe(inject(gulp.src([INJECT_SOURCE],{read: false}), {ignorePath: [INJECT_IGNORE_PATH]}))
+		.pipe(inject(gulp.src([INJECT_SOURCE], { read: false }), { ignorePath: [INJECT_IGNORE_PATH] }))
 		.pipe(gulp.dest(INJECT_DIST));
 });
 
 // Watch
 gulp.task('watch', () => {
+	gulp.watch([tsProject.config.include.toString()], gulp.series('transpile'));
 	gulp.watch([SRC_DIR], gulp.series('build-dev'));
 });
 
 // Exec
 gulp.task('server-prod', (cb) => {
-	exec(SERVER_COMMAND_EXEC, (err, stdout, stderr) => {
+	exec(SERVER_PROD_COMMAND_EXEC, (err, stdout, stderr) => {
 		console.log(stdout);
 		console.log(stderr);
 		cb(err);
 	})
-	.on('exit', function (code) {
-		console.log('child process exited with code ' + code.toString());
-	})
-	.stdout
-	.on('data', (data) => {
-		console.log(data.toString());
-	});
+		.on('exit', function (code) {
+			console.log('child process exited with code ' + code.toString());
+		})
+		.stdout
+		.on('data', (data) => {
+			console.log(data.toString());
+		});
 });
 
-// Nodemon
-gulp.task('server-dev', (done) => {
-
-	let bunyan;
-
-	let modemon = nodemon({
-		ext: 	'js',
-		exec: 	`node -r esm ${SERVER_DIR}${SERVER_FINAME_NAME}`,
-        ignore: [
-            	'node_modules/'
-		],
-        watch:	[SERVER_DIR],
-        done: 	done
+gulp.task('server-dev', (cb) => {
+	exec("node -r esm ./dist/server/server.js", (err, stdout, stderr) => {
+		console.log(stdout);
+		console.log(stderr);
+		cb(err);
 	})
-	
-	modemon
-		.on('readable', () => {
-	
-			// free memory
-			bunyan && bunyan.kill()
-	
-			bunyan = spawn('./node_modules/bunyan/bin/bunyan', [
-				'--output', 'short',
-				'--color'
-			])
-	
-			bunyan.stdout.pipe(process.stdout)
-			bunyan.stderr.pipe(process.stderr)
-	
-			this.stdout.pipe(bunyan.stdin)
-			this.stderr.pipe(bunyan.stdin)
+		.on('exit', function (code) {
+			console.log('child process exited with code ' + code.toString());
 		})
-		// .on('start', [])
-		.on('restart', () => {
-			console.log('server restarted!');
-		})
-		.on('crash', () => {
-			console.error('Application has crashed!\n');
-			modemon.emit('restart', 10)
+		.stdout
+		.on('data', (data) => {
+			console.log(data.toString());
 		});
-})
+});
+
+
+// Nodemon
+// gulp.task('server-dev', () => {
+// 	nodemon(path.join(__dirname, 'nodemon.json'));
+// })
 
 // Run Tasks
 gulp.task('prod',
-	gulp.series('clean','build-prod', 'inject', 'server-prod'));
-gulp.task('dev', 
-	gulp.series('clean','build-dev', 'inject', 
+	gulp.series('clean', 'transpile', 'build-prod', 'inject', 'server-prod'));
+gulp.task('dev',
+	gulp.series('clean', 'transpile', 'build-dev', 'inject',
 		gulp.parallel('watch', 'server-dev')));
