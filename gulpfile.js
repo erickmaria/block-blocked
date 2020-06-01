@@ -15,11 +15,9 @@ const
 		transpile: './src/game',
 		build: './dist/game'
 	},
-	// BUILD_SERVER_SRC_DIR = './src/server/**/*.ts',
-	// BUILD_SERVER_DIST_DIR = ['./dist/server'],
-	// BUILD_GAME_SRC_DIR = './src/game/**/*.ts',
-	// BUILD_GAME_DIST_DIR = './dist/public',
-	BUILD_SRC_DIR = './dist/game',
+	BUILD_SRC_DIR = [
+		'./dist/game'	
+	],
 	BUILD_DIST_DIR = './dist/public',
 	PREBUILD_CLEAN_DIST = './dist',
 	POSBUILD_CLEAN_DIST = './dist/game',
@@ -55,7 +53,7 @@ gulp.task("transpile", function () {
 
 // Generate Development Build
 gulp.task('build', () => {
-	return gulp.src(BUILD_SRC_DIR)
+	return gulp.src(BUILD_SRC_DIR, {allowEmpty: true })
 		.pipe(plumber()
 			.on('error', (err) => {
 				console.log(err);
@@ -110,3 +108,4 @@ gulp.task(
 		)
 	)
 );
+

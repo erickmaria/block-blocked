@@ -1,13 +1,14 @@
 const webpack = require("webpack"),
     HtmlWebpackPlugin = require('html-webpack-plugin'),
     path = require('path'),
-    dotenv = require('dotenv')
+    dotenv = require('dotenv');
 
 dotenv.config({ path: path.join(__dirname, '.env') });
 
 const OUTPUT_DIR = './dist/public',
     OUTPUT_FILENAME = 'game/game.js',
     ENTRY_FILENAME = './dist/game/game.js';
+    HTML_PLUGIN_TEMPLATE = './src/web/template/index.html';
 
 module.exports = {
     mode: process.env.PROFILE,
@@ -18,7 +19,12 @@ module.exports = {
         filename: OUTPUT_FILENAME
     },
     plugins: [
-        new HtmlWebpackPlugin({title:process.env.PROJECT_NAME,filename: 'index.html'}),
+        new HtmlWebpackPlugin({
+            title: process.env.PROJECT_NAME,
+            template: HTML_PLUGIN_TEMPLATE,
+            filename: 'index.html',
+            inject: 'body'
+        }),
         new webpack.DefinePlugin({
             'CANVAS_RENDERER': JSON.stringify(true),
             'WEBGL_RENDERER': JSON.stringify(true),
