@@ -11,10 +11,10 @@
     "outDir": "./dist"
   },
   "include": [
-    "./src/game/**/*",
-    "./src/server/**/*"
+    "./src/**/*.ts",
   ],
   "exclude": [
+    "./src/web",
     "node_modules",
     "**/*.spec.ts"
   ]

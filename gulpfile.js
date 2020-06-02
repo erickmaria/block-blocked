@@ -8,8 +8,11 @@ const
 	webpack = require('webpack'),
 	webpackConfig = require('./webpack.config.js'),
 	gulpWebpack = require('webpack-stream'),
+	browserSync = require('browser-sync').create(),
 	exec = require('child_process').exec;
 
+require('dotenv').config();
+let reload = browserSync.reload;
 const
 	WATCH_SRC_DIR = {
 		transpile: './src/game',
@@ -20,7 +23,7 @@ const
 		dist: './dist/public/assets',
 	},
 	BUILD_SRC_DIR = [
-		'./dist/game'	
+		'./dist/game'
 	],
 	BUILD_DIST_DIR = './dist/public',
 	PREBUILD_CLEAN_DIST = './dist',
@@ -46,6 +49,17 @@ gulp.task('pos-build-clean', () => {
 	return cleanFunc(POSBUILD_CLEAN_DIST)
 });
 
+// // Browser-sync
+gulp.task('browser-sync', function () {
+    browserSync.init({
+		ui: false,
+		proxy: `localhost:${process.env.PORT}`,
+		port: (process.env.PORT+1)
+	});
+    gulp.watch([BUILD_DIST_DIR]).on("change", reload);
+});
+
+// Copy Game Assets
 gulp.task('copy-assets', () => {
 	return gulp.src([ASSETS_DIR.src])
 		.pipe(gulp.dest(ASSETS_DIR.dist));
@@ -61,7 +75,7 @@ gulp.task("transpile", function () {
 
 // Generate Development Build
 gulp.task('build', () => {
-	return gulp.src(BUILD_SRC_DIR, {allowEmpty: true })
+	return gulp.src(BUILD_SRC_DIR, { allowEmpty: true })
 		.pipe(plumber()
 			.on('error', (err) => {
 				console.log(err);
@@ -114,7 +128,8 @@ gulp.task(
 		'copy-assets',
 		gulp.parallel(
 			'watch',
-			'server'
+			'server',
+			'browser-sync'
 		)
 	)
 );
