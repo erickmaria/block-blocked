@@ -15,6 +15,10 @@ const
 		transpile: './src/game',
 		build: './dist/game'
 	},
+	ASSETS_DIR = {
+		src: './src/web/assets/**/*',
+		dist: './dist/public/assets',
+	},
 	BUILD_SRC_DIR = [
 		'./dist/game'	
 	],
@@ -42,6 +46,10 @@ gulp.task('pos-build-clean', () => {
 	return cleanFunc(POSBUILD_CLEAN_DIST)
 });
 
+gulp.task('copy-assets', () => {
+	return gulp.src([ASSETS_DIR.src])
+		.pipe(gulp.dest(ASSETS_DIR.dist));
+});
 
 // Transpile
 gulp.task("transpile", function () {
@@ -91,6 +99,7 @@ gulp.task(
 		'pre-build-clean',
 		'transpile',
 		'build',
+		'copy-assets',
 		'pos-build-clean',
 		'server'
 	)
@@ -102,6 +111,7 @@ gulp.task(
 		'pre-build-clean',
 		'transpile',
 		'build',
+		'copy-assets',
 		gulp.parallel(
 			'watch',
 			'server'
