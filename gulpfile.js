@@ -39,6 +39,22 @@ let cleanFunc = (path) => {
 		.pipe(clean({ force: true }));
 };
 
+let checkProfile = () => {
+	let profile = process.env.PROFILE == 'development' ? true :
+		process.env.PROFILE == 'production' ? false : null;
+
+	if (profile == null) {
+		console.log('\n\n >> Aplication Profile not exist!\n try use: "development" or "production" << \n\n');
+		return process.exit(22);
+	}
+	return console.log(` >> Application Running as ${process.env.PROFILE} mode << `);
+};
+
+// Check Application Profile
+gulp.task('check-profile', async () => {
+	return await checkProfile();
+});
+
 // Pre Build Clean
 gulp.task('pre-build-clean', () => {
 	return cleanFunc(PREBUILD_CLEAN_DIST)
@@ -51,12 +67,12 @@ gulp.task('pos-build-clean', () => {
 
 // // Browser-sync
 gulp.task('browser-sync', function () {
-    browserSync.init({
+	browserSync.init({
 		ui: false,
 		proxy: `localhost:${process.env.PORT}`,
-		port: (process.env.PORT+1)
+		port: (process.env.PORT + 1)
 	});
-    gulp.watch([BUILD_DIST_DIR]).on("change", reload);
+	gulp.watch([BUILD_DIST_DIR]).on("change", reload);
 });
 
 // Copy Game Assets
@@ -110,6 +126,7 @@ gulp.task('server', (cb) => {
 gulp.task(
 	'prod',
 	gulp.series(
+		'check-profile',
 		'pre-build-clean',
 		'transpile',
 		'build',
@@ -122,6 +139,7 @@ gulp.task(
 gulp.task(
 	'dev',
 	gulp.series(
+		'check-profile',
 		'pre-build-clean',
 		'transpile',
 		'build',
