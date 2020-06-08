@@ -70,7 +70,7 @@ gulp.task('browser-sync', function () {
 	browserSync.init({
 		ui: false,
 		proxy: `localhost:${process.env.PORT}`,
-		port: (process.env.PORT + 1)
+		port: (parseInt(process.env.PORT) + 1)
 	});
 	gulp.watch([BUILD_DIST_DIR]).on("change", reload);
 });
