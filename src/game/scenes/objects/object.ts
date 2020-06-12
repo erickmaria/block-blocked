@@ -4,6 +4,6 @@ export interface GObject {
 
     scene: Scene;
     create(): void;
-    amination(): void;
+    animation(): void;
     moviment(): void;
 }
