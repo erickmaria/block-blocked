@@ -2,10 +2,12 @@
   "name": "block-blocked",
   "version": "0.0.1-alpha",
   "description": "2d platform game made in PhaserJS 3",
-  "main": "dist/server/server.js",
+  "main": "dist/server/server.bundle.js",
   "scripts": {
-    "game:dev": "gulp dev",
-    "game:prod": "gulp prod",
+    "build": "tsc",
+    "game:dev": "webpack --config webpack.dev.js",
+    "game:build": "webpack --config webpack.prod.js",
+    "game:run": "node dist/server/server.bundle.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -35,6 +37,8 @@
   "devDependencies": {
     "@types/express": "^4.17.6",
     "browser-sync": "^2.26.7",
+    "browser-sync-webpack-plugin": "^2.2.2",
+    "copy-webpack-plugin": "^6.0.2",
     "gulp": "^4.0.2",
     "gulp-clean": "^0.4.0",
     "gulp-plumber": "^1.2.1",
@@ -42,8 +46,11 @@
     "html-webpack-plugin": "^4.3.0",
     "node-watch": "^0.6.4",
     "reload": "^3.0.5",
+    "ts-loader": "^7.0.5",
     "typescript": "^3.9.3",
     "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12",
+    "webpack-node-externals": "^1.7.2",
     "webpack-stream": "^5.2.1"
   }
 }

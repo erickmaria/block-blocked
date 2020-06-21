@@ -1,11 +1,10 @@
-import { AUTO } from 'phaser';
 import { BootScene } from './scenes/boot.scenes';
 import { LoadScene } from './scenes/preload.scenes';
 import { MenuScene } from './scenes/stages/menu.scenes';
 import { Stage01Scene } from './scenes/stages/01/stage.01.scenes';
 
-const GAME_BG = '#2F3234',
-    DEBUG_MODE = process.env.PROFILE == 'development' ? true : false;
+const GAME_BG = '#2F3234';
+    // DEBUG_MODE = process.env.PROFILE == 'development' ? true : false;
 
 let GameConfig: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
